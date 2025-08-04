@@ -2,4 +2,8 @@
 ```
 https://raw.githubusercontent.com/llxo/clash-cr/refs/heads/main/customrules.ini
 ```
+移动端
+```
+https://raw.githubusercontent.com/llxo/clash-cr/refs/heads/main/mobile-cr.ini
+```
 轻量,防泄漏,但可能多花流量
