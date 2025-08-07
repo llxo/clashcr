@@ -19,7 +19,7 @@ function main(config, profileName) {
     username: 'username', 
     password: 'password', 
     udp: true,
-    "dialer-proxy": IEPL // 前置代理，非节点选择避免循环代理
+    'dialer-proxy': 'IEPL' // 前置代理，非节点选择避免循环代理
   })
   return config;
 }
