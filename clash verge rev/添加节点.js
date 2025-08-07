@@ -10,18 +10,16 @@ function main(config, profileName) {
     udp: true,
     network: 'ws',
     'skip-cert-verify': true
-  });
+  })
   config.proxies.push({
-    name: 'name2',
-    type: 'vmess',
-    server: 'server',
-    port: 1111,
-    uuid: 'uuid',
-    alterId: 0,
-    cipher: 'auto',
+    name: '家宽',
+    type: 'socks5', 
+    server: 'server', 
+    port: 1111, 
+    username: 'username', 
+    password: 'password', 
     udp: true,
-    network: 'ws',
-    'skip-cert-verify': true
-  });
+    "dialer-proxy": IEPL // 前置代理，非节点选择避免循环代理
+  })
   return config;
 }

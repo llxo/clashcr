@@ -24,7 +24,7 @@ rules:
   - GEOSITE,rockstar,HongKong
   - GEOSITE,tiktok,TikTok
   - GEOSITE,google-gemini,TikTok
-    # 基础
+  # 基础
   - GEOSITE,gfw,节点选择
   - GEOSITE,cn,DIRECT
   - GEOIP,CN,DIRECT,no-resolve
@@ -38,6 +38,7 @@ proxy-groups:
     proxies:
       - "DIRECT"
       - "HongKong"
+      - "IEPL"
 
   - name: "Telegram"
     type: select
@@ -47,16 +48,7 @@ proxy-groups:
     proxies:
       - "节点选择"
       - "HongKong"
-      - "DIRECT"
-
-  - name: "HongKong"
-    type: url-test
-    url: "https://www.gstatic.com/generate_204"
-    interval: 300
-    tolerance: 50
-    include-all-proxies: true
-    filter: "(?i)港|hk|hongkong|hong kong|🇭🇰"
-    icon: "https://fastly.jsdelivr.net/gh/clash-verge-rev/clash-verge-rev.github.io@main/docs/assets/icons/flags/hk.svg"
+      - "IEPL"
 
   - name: "TikTok"
     type: select
@@ -65,3 +57,22 @@ proxy-groups:
     icon: "https://fastly.jsdelivr.net/gh/Orz-3/mini@master/Color/FRANXX.png"
     proxies:
       - "节点选择"
+      - "IEPL"
+
+  - name: "HongKong"
+    type: url-test
+    url: "https://www.gstatic.com/generate_204"
+    interval: 300
+    tolerance: 50
+    include-all-proxies: true
+    filter: "(?i)港|hk|HongKong|hong kong|🇭🇰"
+    icon: "https://fastly.jsdelivr.net/gh/clash-verge-rev/clash-verge-rev.github.io@main/docs/assets/icons/flags/hk.svg"
+
+  - name: "IEPL"
+    type: select
+    url: "https://www.gstatic.com/generate_204"
+    interval: 300
+    tolerance: 50
+    include-all-proxies: true
+    filter: "(?i)IEPL"
+    icon: "https://www.clashverge.dev/assets/icons/speed.svg"
