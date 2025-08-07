@@ -74,5 +74,5 @@ proxy-groups:
     interval: 300
     tolerance: 50
     include-all-proxies: true
-    filter: "(?i)IEPL"
+    filter: "(?i)IEPL|专线"
     icon: "https://www.clashverge.dev/assets/icons/speed.svg"

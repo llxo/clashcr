@@ -1,3 +1,4 @@
+// 不再更新，覆写更稳定
 const rules = [
   //自定义直连
   'DOMAIN-SUFFIX,jx.cn,DIRECT',
