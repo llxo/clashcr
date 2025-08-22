@@ -19,13 +19,17 @@
  *
  * [fgf=]   节点名前缀或国旗分隔符，默认为空；
  * [sn=]    设置国家与序号之间的分隔符，默认为空格；
+ * [nsep=]  机场名称专用分隔符，默认 " | "
+ * 
  * 序号参数
  * [one]    清理只有一个节点的地区的01
  * [flag]   给节点前面加国旗
  *
- *** 前缀参数
- * [name=]  节点添加机场名称前缀；
- * [nf]     把 name= 的前缀值放在最前面
+ *** 机场名称参数
+ * [name=]  节点添加机场名称；
+ * [nf]     把 name= 的值放在最前面
+ * [ne]     把 name= 的值放在最后面（默认启用）
+ *
  *** 保留参数
  * [blkey=iplc+gpt+NF+IPLC] 用+号添加多个关键词 保留节点名的自定义字段 需要区分大小写!
  * 如果需要修改 保留的关键词 替换成别的 可以用 > 分割 例如 [#blkey=GPT>新名字+其他关键词] 这将把【GPT】替换成【新名字】
@@ -53,10 +57,12 @@ const nx = inArg.nx || false,
   clear = inArg.clear || false,
   addflag = inArg.flag || false,
   nm = inArg.nm || false;
-
 const FGF = inArg.fgf == undefined ? "" : decodeURI(inArg.fgf),
   XHFGF = inArg.sn == undefined ? " " : decodeURI(inArg.sn),
   FNAME = inArg.name == undefined ? "" : decodeURI(inArg.name),
+  // ne: put name at end by default; nsep: separator to use around airport name (default ' | ')
+  NE = inArg.ne == undefined ? true : inArg.ne,
+  NSEP = inArg.nsep == undefined ? " | " : decodeURI(inArg.nsep),
   BLKEY = inArg.blkey == undefined ? "" : decodeURI(inArg.blkey),
   blockquic = inArg.blockquic == undefined ? "" : decodeURI(inArg.blockquic),
   nameMap = {
@@ -255,11 +261,17 @@ function operator(pro) {
       e.name.includes(key)
     )
     
+    // firstName: name placed at front when nf=true
+    // nNames: name placed in middle by default
+    // NE flag: place name at end
     let firstName = "",
-      nNames = "";
+      nNames = "",
+      endName = "";
 
     if (nf) {
       firstName = FNAME;
+    } else if (NE) {
+      endName = FNAME;
     } else {
       nNames = FNAME;
     }
@@ -273,10 +285,32 @@ function operator(pro) {
             usflag = FG[index];
           }
       }
-      keyover = keyover
-        .concat(firstName, usflag, nNames, findKeyValue, retainKey, ikey, ikeys)
-        .filter((k) => k !== "");
-      e.name = keyover.join(FGF);
+      // When airport name exists, use NSEP between name and adjacent parts.
+      // Build components and join carefully to respect different separators.
+      const parts = [];
+  if (firstName) parts.push(firstName + (NSEP || ""));
+      if (usflag) parts.push(usflag);
+
+      if (nNames) {
+        // name in middle: name should be adjacent to usflag (if present) and region name
+        // so push name and then region; use NSEP directly (may be empty)
+        parts.push(nNames + (NSEP || ""));
+      }
+
+      // push region value
+      parts.push(findKeyValue);
+
+      if (retainKey) parts.push(retainKey);
+      if (ikey) parts.push(ikey);
+      if (ikeys) parts.push(ikeys);
+
+      // if endName set, store it temporarily on the proxy to append after numbering
+      if (endName) {
+        e._endName = endName;
+      }
+
+      // join whole thing using FGF as primary separator (between main components)
+      e.name = parts.filter((k) => k !== "").join(FGF);
     } else {
       if (nm) {
         e.name = FNAME + FGF + e.name;
@@ -289,6 +323,16 @@ function operator(pro) {
   jxh(pro);
   numone && oneP(pro);
   blpx && (pro = fampx(pro));
+  // If proxies have stored endName (_endName), append it now after numbering and other adjustments
+  if (NE && FNAME) {
+    const sep = NSEP || "";
+    pro.forEach((e) => {
+      if (e._endName) {
+        e.name = e.name + (sep !== "" ? sep : "") + e._endName;
+        delete e._endName;
+      }
+    });
+  }
   key && (pro = pro.filter((e) => !keyb.test(e.name)));
   return pro;
 }
